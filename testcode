@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+    <h2>Web3 - Kết nối MetaMask</h2>
+
+    <button onclick="connectWallet()">Kết nối ví</button>
+
+    <p id="wallet">Chưa kết nối</p>
+    <p id="balance"></p>
+
+    <script>
+        async function connectWallet() {
+            if (!window.ethereum) {
+                alert("Vui lòng cài đặt MetaMask!");
+                return;
+            }
+
+            try {
+                // Yêu cầu kết nối ví
+                await window.ethereum.request({
+                    method: "eth_requestAccounts"
+                });
+
+                // Khởi tạo provider
+                const provider = new ethers.BrowserProvider(window.ethereum);
+
+                // Lấy signer
+                const signer = await provider.getSigner();
+
+                // Địa chỉ ví
+                const address = await signer.getAddress();
+
+                document.getElementById("wallet").innerText =
+                    "Địa chỉ ví: " + address;
+
+                // Lấy số dư
+                const balance = await provider.getBalance(address);
+
+                document.getElementById("balance").innerText =
+                    "Số dư: " +
+                    ethers.formatEther(balance) +
+                    " ETH";
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
